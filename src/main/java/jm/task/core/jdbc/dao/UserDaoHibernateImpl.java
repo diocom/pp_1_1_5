@@ -34,12 +34,12 @@ private Session sessionEx = null;
 
     @Override
     public void dropUsersTable() {
-        String query = "DROP TABLE IF EXISTS `test`.`Users` ";
+        String sqlQuery = "DROP TABLE IF EXISTS `test`.`Users` ";
 
         try(Session session = Util.getSessionFactory().openSession()) {
             sessionEx = session;
             session.beginTransaction();
-            session.createSQLQuery(query).executeUpdate();
+            session.createSQLQuery(sqlQuery).executeUpdate();
             session.getTransaction().commit();
         } catch (RuntimeException e) {
             sessionEx.getTransaction().rollback();
@@ -81,13 +81,8 @@ private Session sessionEx = null;
     @Override
     public List<User> getAllUsers() {
         try(Session session = Util.getSessionFactory().openSession()) {
-            sessionEx = session;
-            session.beginTransaction();
-            List<User> listUsers = session.createQuery("FROM User").getResultList();
-            session.getTransaction().commit();
-            return listUsers;
+            return session.createQuery("SELECT u FROM User u", User.class).getResultList();
         } catch (RuntimeException e) {
-            sessionEx.getTransaction().rollback();
             throw new RuntimeException();
         }
     }
